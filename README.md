@@ -1,54 +1,72 @@
-# React + TypeScript + Vite
+# Okto SDK External Adapter Template Template
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a React + Vite template pre-configured with [Okto SDK](https://docs.okto.tech/) for building chain abstracted decentralized applications. It provides a solid foundation for creating Web3-enabled applications with best practices and essential tooling.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ⚡️ **React + Vite** for lightning-fast development
+- 🔐 **Okto Wagmi & Rainbowkit Adapter** integration for seamless Web3 functionality
+- 📱 **Responsive Design** with Tailwind CSS
+- 🔑 **Google OAuth** for secure authentication
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Before you begin, ensure you have the following installed:
+- Node.js 18.x or later and npm/pnpm/yarn
+- **Okto API Keys:** `VITE_CLIENT_PRIVATE_KEY` and `VITE_CLIENT_SWA`. Obtain these from the [Okto Developer Dashboard](https://dashboard.okto.tech/login).
+- Google OAuth Credentials
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Getting Started
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. Clone this template:
+   ```bash
+   git clone https://github.com/okto-hq/okto-sdkv2-external-adapter-template
+   cd okto-sdkv2-external-adapter-template
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+3. Set up your environment variables:
+   ```bash
+   cp .env.sample .env
+   ```
+   Edit `.env` and add your Okto API credentials:
+
+    ```title=".env"
+    # The Okto environment "sandbox" or "production"
+    VITE_OKTO_ENVIRONMENT= "sandbox"
+
+    # Get the below values from Okto Developer Dashboard. Learn how here- https://docsv2.okto.tech/docs/developer-admin-dashboard
+    VITE_OKTO_CLIENT_PRIVATE_KEY= "YOUR_CLIENT_PRIVATE_KEY"
+    VITE_OKTO_CLIENT_SWA= "YOUR_CLIENT_SWA"
+
+    # Only needed if google authentication is used
+    VITE_GOOGLE_CLIENT_ID= "YOUR_GOOGLE_CLIENT_ID"
+    ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:5173](http://localhost:5173) with your browser to see your application.
+
+## Deployment
+
+This template can be deployed to any static hosting service. Some popular options include:
+
+- [Vercel](https://vercel.com)
+- [Netlify](https://netlify.com)
+
+Follow the respective platform's documentation for deployment instructions.
+
+## Learn More
+
+- [Okto SDK Documentation](https://docs.okto.tech/)
+- [React Documentation](https://react.dev)
+- [Vite Documentation](https://vitejs.dev)
+
+
