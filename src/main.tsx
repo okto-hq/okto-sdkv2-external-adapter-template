@@ -4,24 +4,37 @@ import './index.css'
 import App from './App.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@rainbow-me/rainbowkit/styles.css';
+import { getOktoSdkConnector, OktoParameters } from '@okto_web3/wagmi-adapter';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { createConfig, WagmiProvider } from 'wagmi';
+import { createConfig, WagmiProvider, http } from 'wagmi';
 import { baseSepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { rainbowWallet, injectedWallet } from '@rainbow-me/rainbowkit/wallets';
-import { http } from 'wagmi';
+
+const oktoParams: OktoParameters = {
+  environment: import.meta.env.VITE_OKTO_ENVIRONMENT,
+  clientPrivateKey: import.meta.env.VITE_OKTO_CLIENT_PRIVATE_KEY,
+  clientSWA: import.meta.env.VITE_OKTO_CLIENT_SWA,
+  googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID
+} as OktoParameters;
+
+console.log(oktoParams);
 
 const connectors = connectorsForWallets(
   [
     {
-      groupName: 'Recommended',
-      wallets: [rainbowWallet, injectedWallet],
-    },
+      groupName: ' Social Login',
+      wallets: [
+        getOktoSdkConnector({
+          type: 'google',
+          params: oktoParams,
+        }),
+      ],
+    }
   ],
   {
     appName: 'Buy Me a Coffee',
-    projectId: 'PROJECT_ID',
+    projectId: '63a6a2a698592d4e1529e8b63fc05d63',
   }
 );
 
