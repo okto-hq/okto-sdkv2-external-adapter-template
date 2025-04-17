@@ -6,7 +6,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@rainbow-me/rainbowkit/styles.css';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { createConfig, WagmiProvider } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { rainbowWallet, injectedWallet } from '@rainbow-me/rainbowkit/wallets';
@@ -27,9 +27,9 @@ const connectors = connectorsForWallets(
 
 const config = createConfig({
     connectors,
-    chains: [mainnet],
+    chains: [baseSepolia],
     transports: {
-        [mainnet.id]: http()
+        [baseSepolia.id]: http()
     }
 });
 
