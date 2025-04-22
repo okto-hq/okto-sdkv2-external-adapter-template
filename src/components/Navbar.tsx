@@ -4,7 +4,7 @@ import { LogOut, User } from "lucide-react";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useChainId } from "wagmi";
 
 interface NavbarProps {
   user: Record<string, any> | null;
@@ -16,8 +16,12 @@ interface NavbarProps {
   onBack: () => void;
 }
 
+const chainNameMap: Record<number, string> = {
+  84532: "Base Sepolia",
+  11155111: "Sepolia",
+};
+
 export function Navbar({
-  isSignedIn,
   onSignIn,
   onSignOut,
   onDashboard,
@@ -28,6 +32,7 @@ export function Navbar({
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
+  const chainId = useChainId();
 
   useEffect(() => {
     const idToken = localStorage.getItem("googleIdToken");
@@ -59,35 +64,22 @@ export function Navbar({
             Buy Me a Coffee
           </h1>
           <div className="flex items-center gap-4">
-            {!isSignedIn ? (
-              <GoogleLogin onSuccess={handleGoogleLogin} />
-            ) : (
+            {isConnected ? (
               <>
                 <div className="flex items-center gap-2">
-                  <img
-                    src={user?.picture}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="font-medium">{user?.name}</span>
+                  <User size={24} />
+                  <span className="text-gray-700 font-bold">
+                    {chainNameMap[chainId] || `Chain ID: ${chainId}`}
+                  </span>
+                  <span className="text-gray-700">{address}</span>
                 </div>
                 <button
-                  onClick={onSignOut}
-                  className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded"
+                  onClick={() => disconnect()}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                 >
-                  <LogOut size={16} />
-                  Sign Out
+                  Disconnect Wallet
                 </button>
               </>
-            )}
-
-            {isConnected ? (
-              <button
-                onClick={() => disconnect()}
-                className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Disconnect Wallet
-              </button>
             ) : (
               <button
                 onClick={() => connect({ connector: connectors[0] })}

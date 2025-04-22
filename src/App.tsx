@@ -18,7 +18,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isConnected } = useAccount();
   const [toAddress, setToAddress] = useState(
-    "0xF88013978619dC3D1a18aFf45F84A5Da2c22848B"
+    "0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"
   );
   const [amount, setAmount] = useState(0.0005);
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -56,21 +56,22 @@ function App() {
         to: toAddress as `0x${string}`,
         value: parseEther(amount.toString()),
       });
-
-      if (isConfirmed) {
-        setIsSuccess(true);
-        // Reset and close modal after showing success
-        setTimeout(() => {
-          setIsModalOpen(false);
-          setIsSuccess(false);
-        }, 1500);
-      }
     } catch (error) {
       console.error("Transaction error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSuccess(false);
+      }, 5000);
+    }
+  }, [isConfirmed]);
 
   const handleSignIn = () => {
     setIsSignedIn(true);
@@ -85,7 +86,7 @@ function App() {
   };
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText("0xF88013978619dC3D1a18aFf45F84A5Da2c22848B");
+    navigator.clipboard.writeText("0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -119,7 +120,7 @@ function App() {
                 <p className="text-md text-gray-500">Send funds to:</p>
                 <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
                   <span className="font-mono text-sm">
-                    {"0xF88013978619dC3D1a18aFf45F84A5Da2c22848B"}
+                    {"0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"}
                   </span>
                   <button
                     onClick={handleCopyAddress}
