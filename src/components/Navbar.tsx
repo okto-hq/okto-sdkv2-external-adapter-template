@@ -1,7 +1,7 @@
 /** @format */
 
-import { LogOut, User } from "lucide-react";
-import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { User } from "lucide-react";
+import { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
 import { useAccount, useConnect, useDisconnect, useChainId } from "wagmi";
@@ -33,6 +33,9 @@ export function Navbar({
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
+
+  const connector0 = connectors[0];
+  const connector1 = connectors[1];
 
   useEffect(() => {
     const idToken = localStorage.getItem("googleIdToken");
@@ -81,13 +84,17 @@ export function Navbar({
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => connect({ connector: connectors[0] })}
-                disabled={isConnecting}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-              >
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
-              </button>
+              <>
+                {connector0 && (
+                  <button
+                    onClick={() => connect({ connector: connector0 })}
+                    disabled={isConnecting}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                  >
+                    {isConnecting ? "Connecting..." : `Connect with ${connector0.name}`}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
