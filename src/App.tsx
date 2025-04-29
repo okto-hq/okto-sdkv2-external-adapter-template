@@ -1,33 +1,50 @@
-import { useEffect, useState } from 'react';
-import { Coffee, X, Loader2, CheckCircle, Copy } from 'lucide-react';
-import { Navbar } from './components/Navbar';
-import { Dashboard } from './components/Dashboard';
-import './App.css'
-import { googleLogout } from '@react-oauth/google';
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt, type BaseError } from 'wagmi';
-import { parseEther } from 'viem';
+/** @format */
+
+import { useEffect, useState } from "react";
+import { Coffee, X, Loader2, CheckCircle, Copy } from "lucide-react";
+import { Navbar } from "./components/Navbar";
+import { Dashboard } from "./components/Dashboard";
+import "./App.css";
+import { googleLogout } from "@react-oauth/google";
+import {
+  useAccount,
+  useSendTransaction,
+  useWaitForTransactionReceipt,
+  type BaseError,
+} from "wagmi";
+import { parseEther } from "viem";
+import { useChainId } from "wagmi";
+import { useSwitchChain } from "wagmi";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const chainId = useChainId();
   const { isConnected } = useAccount();
-  const [toAddress, setToAddress] = useState('0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2'); 
+  const [toAddress, setToAddress] = useState(
+    "0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2"
+  );
   const [amount, setAmount] = useState(0.0005);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-  const [ user , setUser ] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [isCopied, setIsCopied] = useState(false);
-  const { data: hash, isPending, sendTransaction, error } = useSendTransaction()
+  const {
+    data: hash,
+    isPending,
+    sendTransaction,
+    error,
+  } = useSendTransaction();
+  const { chains, switchChain } = useSwitchChain();
 
-  const { isSuccess: isConfirmed } = 
-    useWaitForTransactionReceipt({ 
-      hash, 
-    }) 
-    
+  const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
+
   useEffect(() => {
-    if(isConnected) {
-       handleSignIn();
+    if (isConnected) {
+      handleSignIn();
     } else {
       handleSignOut();
     }
@@ -37,27 +54,38 @@ function App() {
   const predefinedAmountsInEther = [0.0005, 0.001, 0.002, 0.005];
 
   const handleSupport = async () => {
+    if (chainId !== 84532) {
+      try {
+        console.log("Current chainId:", chainId);
+        await switchChain({ chainId: 84532 }); // Trigger switch
+      } catch (error) {
+        alert("Network switch to Base Sepolia failed or was rejected.");
+        return;
+      }
+    }
+
     setIsLoading(true);
     try {
       sendTransaction({
         to: toAddress as `0x${string}`,
         value: parseEther(amount.toString()),
       });
-
-      if (isConfirmed) {
-        setIsSuccess(true);
-        // Reset and close modal after showing success
-        setTimeout(() => {
-          setIsModalOpen(false);
-          setIsSuccess(false);
-        }, 1500);
-      }
     } catch (error) {
       console.error("Transaction error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setIsSuccess(true);
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSuccess(false);
+      }, 5000);
+    }
+  }, [isConfirmed]);
 
   const handleSignIn = () => {
     setIsSignedIn(true);
@@ -72,7 +100,7 @@ function App() {
   };
 
   const handleCopyAddress = () => {
-    navigator.clipboard.writeText('0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2');
+    navigator.clipboard.writeText("0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -80,30 +108,29 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
       <Navbar
-        isSignedIn={isSignedIn}
-        onSignIn={handleSignIn}
-        onSignOut={handleSignOut}
         onDashboard={() => setShowDashboard(true)}
         onBack={() => setShowDashboard(false)}
-        user={user}
-        setUser={setUser}
       />
-      
+
       {showDashboard ? (
-        <Dashboard onBack={() => setShowDashboard(false)} user={user}/>
+        <Dashboard onBack={() => setShowDashboard(false)} user={user} />
       ) : (
         <div className="flex items-center justify-center p-4 pt-40">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center">
               <Coffee className="w-16 h-16 mx-auto text-amber-600 mb-4" />
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Support My Work</h1>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                Support My Work
+              </h1>
               <p className="text-gray-600 mb-2">
                 If you enjoy my work, consider buying me a coffee ☕️
               </p>
               <div className="flex flex-col items-center gap-2 mb-8">
                 <p className="text-md text-gray-500">Send funds to:</p>
                 <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg">
-                  <span className="font-mono text-sm">{'0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2'}</span>
+                  <span className="font-mono text-sm">
+                    {"0x88beE8eb691FFAFB192BAC4D1E7042e1b44c3eF2"}
+                  </span>
                   <button
                     onClick={handleCopyAddress}
                     className="p-1 hover:bg-gray-200 rounded transition-colors"
@@ -156,14 +183,16 @@ function App() {
                       </h2>
 
                       <div className="grid grid-cols-2 gap-3 mb-6">
-                        {predefinedAmounts.map((preset , index) => (
+                        {predefinedAmounts.map((preset, index) => (
                           <button
                             key={preset}
-                            onClick={() => setAmount(predefinedAmountsInEther[index])}
+                            onClick={() =>
+                              setAmount(predefinedAmountsInEther[index])
+                            }
                             className={`py-3 rounded-lg font-medium transition-colors duration-200 ${
                               amount === predefinedAmountsInEther[index]
-                                ? 'bg-amber-600 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? "bg-amber-600 text-white"
+                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                           >
                             {predefinedAmountsInEther[index]} (~${preset})
@@ -205,7 +234,8 @@ function App() {
                       </button>
                       {error && (
                         <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                          Error: {(error as BaseError).shortMessage || error.message}
+                          Error:{" "}
+                          {(error as BaseError).shortMessage || error.message}
                         </div>
                       )}
                     </>
