@@ -14,6 +14,7 @@ import {
 } from "wagmi";
 import { parseEther } from "viem";
 import { useChainId } from "wagmi";
+import { useSwitchChain } from 'wagmi';
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
     sendTransaction,
     error,
   } = useSendTransaction();
+  const { chains, switchChain } = useSwitchChain();
+
 
   const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
@@ -54,9 +57,14 @@ function App() {
 
   const handleSupport = async () => {
     if (chainId !== 84532) {
-      alert("Please switch to Base Sepolia to support.");
+      try {
+      console.log("Current chainId:", chainId);
+      await switchChain({ chainId: 84532 }); // Trigger switch
+    } catch (error) {
+      alert("Network switch to Base Sepolia failed or was rejected.");
       return;
     }
+  }
 
     setIsLoading(true);
     try {

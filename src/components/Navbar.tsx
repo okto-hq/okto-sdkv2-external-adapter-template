@@ -3,8 +3,9 @@
 import { User } from "lucide-react";
 import { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
-import { useAccount, useConnect, useDisconnect, useChainId } from "wagmi";
+import { useEffect, useState } from "react";
+import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
+
 
 interface NavbarProps {
   user: Record<string, any> | null;
@@ -13,7 +14,7 @@ interface NavbarProps {
   onSignIn: () => void;
   onSignOut: () => void;
   onDashboard: () => void;
-  onBack: () => void;
+  onBack: () => void; 
 }
 
 const chainNameMap: Record<number, string> = {
@@ -33,9 +34,11 @@ export function Navbar({
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
+  const { chains, switchChain } = useSwitchChain();
+  const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
+
 
   const connector0 = connectors[0];
-  const connector1 = connectors[1];
 
   useEffect(() => {
     const idToken = localStorage.getItem("googleIdToken");
@@ -45,6 +48,20 @@ export function Navbar({
       onSignIn();
     }
   }, [onSignIn, setUser]);
+
+  useEffect(() => {
+  const ensureCorrectNetwork = async () => {
+    if (isConnected && chainId !== 84532) {
+      try {
+        await switchChain({ chainId: 84532 });
+      } catch (e) {
+        console.warn("Network switch failed:", e);
+      }
+    }
+  };
+
+  ensureCorrectNetwork();
+}, [isConnected, chainId, switchChain]);
 
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
     const idToken = credentialResponse.credential || "";
@@ -69,11 +86,32 @@ export function Navbar({
           <div className="flex items-center gap-4">
             {isConnected ? (
               <>
+               
                 <div className="flex items-center gap-2">
                   <User size={24} />
-                  <span className="text-gray-700 font-bold">
-                    {chainNameMap[chainId] || `Chain ID: ${chainId}`}
-                  </span>
+                   {!showNetworkDropdown ? (
+                    <button
+                      onClick={() => setShowNetworkDropdown(true)}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Select Network
+                    </button>
+                  ) : (
+                    <select
+                      className="border px-2 py-1 rounded"
+                      onChange={(e) => switchChain({ chainId: parseInt(e.target.value) })}
+                      defaultValue=""
+                    >
+                      <option value="" disabled>
+                        Choose network
+                      </option>
+                      {chains.map((chain) => (
+                        <option key={chain.id} value={chain.id}>
+                          {chain.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                   <span className="text-gray-700">{address}</span>
                 </div>
                 <button
