@@ -1,7 +1,6 @@
 /** @format */
 
 import { User } from "lucide-react";
-import { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
@@ -17,17 +16,9 @@ interface NavbarProps {
   onBack: () => void; 
 }
 
-const chainNameMap: Record<number, string> = {
-  84532: "Base Sepolia",
-  11155111: "Sepolia",
-};
-
 export function Navbar({
   onSignIn,
-  onSignOut,
-  onDashboard,
   onBack,
-  user,
   setUser,
 }: NavbarProps) {
   const { address, isConnected } = useAccount();
@@ -62,16 +53,6 @@ export function Navbar({
 
   ensureCorrectNetwork();
 }, [isConnected, chainId, switchChain]);
-
-  const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
-    const idToken = credentialResponse.credential || "";
-    if (idToken) {
-      localStorage.setItem("googleIdToken", idToken);
-      const decoded = jwtDecode<Record<string, any>>(idToken);
-      setUser(decoded);
-      onSignIn();
-    }
-  };
 
   return (
     <nav className="bg-white shadow-md">
