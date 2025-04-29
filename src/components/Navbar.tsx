@@ -1,58 +1,41 @@
 /** @format */
 
 import { User } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect, useChainId, useSwitchChain } from "wagmi";
-
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useChainId,
+  useSwitchChain,
+} from "wagmi";
 
 interface NavbarProps {
-  user: Record<string, any> | null;
-  setUser: (decoded: Record<string, any>) => void;
-  isSignedIn: boolean;
-  onSignIn: () => void;
-  onSignOut: () => void;
-  onDashboard: () => void;
-  onBack: () => void; 
+  onBack: () => void;
 }
 
-export function Navbar({
-  onSignIn,
-  onBack,
-  setUser,
-}: NavbarProps) {
+export function Navbar({ onBack }: NavbarProps) {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
   const { chains, switchChain } = useSwitchChain();
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false);
-
-
   const connector0 = connectors[0];
 
   useEffect(() => {
-    const idToken = localStorage.getItem("googleIdToken");
-    if (idToken) {
-      const decoded = jwtDecode<Record<string, any>>(idToken);
-      setUser(decoded);
-      onSignIn();
-    }
-  }, [onSignIn, setUser]);
-
-  useEffect(() => {
-  const ensureCorrectNetwork = async () => {
-    if (isConnected && chainId !== 84532) {
-      try {
-        await switchChain({ chainId: 84532 });
-      } catch (e) {
-        console.warn("Network switch failed:", e);
+    const ensureCorrectNetwork = async () => {
+      if (isConnected && chainId !== 84532) {
+        try {
+          await switchChain({ chainId: 84532 });
+        } catch (e) {
+          console.warn("Network switch failed:", e);
+        }
       }
-    }
-  };
+    };
 
-  ensureCorrectNetwork();
-}, [isConnected, chainId, switchChain]);
+    ensureCorrectNetwork();
+  }, [isConnected, chainId, switchChain]);
 
   return (
     <nav className="bg-white shadow-md">
@@ -67,10 +50,9 @@ export function Navbar({
           <div className="flex items-center gap-4">
             {isConnected ? (
               <>
-               
                 <div className="flex items-center gap-2">
                   <User size={24} />
-                   {!showNetworkDropdown ? (
+                  {!showNetworkDropdown ? (
                     <button
                       onClick={() => setShowNetworkDropdown(true)}
                       className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
@@ -80,7 +62,9 @@ export function Navbar({
                   ) : (
                     <select
                       className="border px-2 py-1 rounded"
-                      onChange={(e) => switchChain({ chainId: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        switchChain({ chainId: parseInt(e.target.value) })
+                      }
                       defaultValue=""
                     >
                       <option value="" disabled>
@@ -110,7 +94,9 @@ export function Navbar({
                     disabled={isConnecting}
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
                   >
-                    {isConnecting ? "Connecting..." : `Connect with ${connector0.name}`}
+                    {isConnecting
+                      ? "Connecting..."
+                      : `Connect with ${connector0.name}`}
                   </button>
                 )}
               </>
