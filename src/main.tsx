@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import { okto } from '@okto_web3/wagmi-adapter';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import {
   WagmiProvider,
   cookieStorage,
@@ -11,7 +10,7 @@ import {
   createStorage,
   http,
 } from 'wagmi';
-import { baseSepolia, sepolia } from 'wagmi/chains';
+import { baseSepolia } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Load environment variables
@@ -21,7 +20,7 @@ const OKTO_CLIENT_SWA = import.meta.env.VITE_OKTO_CLIENT_SWA;
 
 // Create wagmi config
 const config =  createConfig({
-    chains: [baseSepolia, sepolia],
+    chains: [baseSepolia],
     connectors: [
       okto({
         environment: 'sandbox',
@@ -36,7 +35,6 @@ const config =  createConfig({
     ssr: true,
     transports: {
       [baseSepolia.id]: http(),
-      [sepolia.id]: http(),
     },
   });
 

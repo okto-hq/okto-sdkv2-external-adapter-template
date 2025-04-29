@@ -13,9 +13,12 @@ import {
   type BaseError,
 } from "wagmi";
 import { parseEther } from "viem";
+import { useChainId } from "wagmi";
+
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const chainId = useChainId();
   const { isConnected } = useAccount();
   const [toAddress, setToAddress] = useState(
     "0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"
@@ -50,6 +53,11 @@ function App() {
   const predefinedAmountsInEther = [0.0005, 0.001, 0.002, 0.005];
 
   const handleSupport = async () => {
+    if (chainId !== 84532) {
+      alert("Please switch to Base Sepolia to support.");
+      return;
+    }
+
     setIsLoading(true);
     try {
       sendTransaction({
@@ -62,6 +70,7 @@ function App() {
       setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
     if (isConfirmed) {
