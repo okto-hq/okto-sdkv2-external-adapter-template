@@ -5,7 +5,6 @@ import { Coffee, X, Loader2, CheckCircle, Copy } from "lucide-react";
 import { Navbar } from "./components/Navbar";
 import { Dashboard } from "./components/Dashboard";
 import "./App.css";
-import { googleLogout } from "@react-oauth/google";
 import {
   useAccount,
   useSendTransaction,
@@ -14,8 +13,7 @@ import {
 } from "wagmi";
 import { parseEther } from "viem";
 import { useChainId } from "wagmi";
-import { useSwitchChain } from 'wagmi';
-
+import { useSwitchChain } from "wagmi";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +23,6 @@ function App() {
     "0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"
   );
   const [amount, setAmount] = useState(0.0005);
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -39,18 +36,9 @@ function App() {
   } = useSendTransaction();
   const { chains, switchChain } = useSwitchChain();
 
-
   const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
-
-  useEffect(() => {
-    if (isConnected) {
-      handleSignIn();
-    } else {
-      handleSignOut();
-    }
-  }, [isConnected]);
 
   const predefinedAmounts = [1, 3, 5, 10];
   const predefinedAmountsInEther = [0.0005, 0.001, 0.002, 0.005];
@@ -58,13 +46,13 @@ function App() {
   const handleSupport = async () => {
     if (chainId !== 84532) {
       try {
-      console.log("Current chainId:", chainId);
-      await switchChain({ chainId: 84532 }); // Trigger switch
-    } catch (error) {
-      alert("Network switch to Base Sepolia failed or was rejected.");
-      return;
+        console.log("Current chainId:", chainId);
+        await switchChain({ chainId: 84532 }); // Trigger switch
+      } catch (error) {
+        alert("Network switch to Base Sepolia failed or was rejected.");
+        return;
+      }
     }
-  }
 
     setIsLoading(true);
     try {
@@ -79,7 +67,6 @@ function App() {
     }
   };
 
-
   useEffect(() => {
     if (isConfirmed) {
       setIsSuccess(true);
@@ -90,18 +77,6 @@ function App() {
     }
   }, [isConfirmed]);
 
-  const handleSignIn = () => {
-    setIsSignedIn(true);
-  };
-
-  const handleSignOut = () => {
-    googleLogout();
-    localStorage.removeItem("googleIdToken");
-    setIsSignedIn(false);
-    setIsModalOpen(false);
-    setShowDashboard(false);
-  };
-
   const handleCopyAddress = () => {
     navigator.clipboard.writeText("0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6");
     setIsCopied(true);
@@ -110,15 +85,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
-      <Navbar
-        isSignedIn={isSignedIn}
-        onSignIn={handleSignIn}
-        onSignOut={handleSignOut}
-        onDashboard={() => setShowDashboard(true)}
-        onBack={() => setShowDashboard(false)}
-        user={user}
-        setUser={setUser}
-      />
+      <Navbar onBack={() => setShowDashboard(false)} />
 
       {showDashboard ? (
         <Dashboard onBack={() => setShowDashboard(false)} user={user} />
@@ -153,7 +120,7 @@ function App() {
                 </div>
               </div>
 
-              {isSignedIn && (
+              {isConnected && (
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="w-full bg-amber-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-amber-700 transition-colors duration-200"
