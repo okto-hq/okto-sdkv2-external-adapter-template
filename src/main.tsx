@@ -7,6 +7,8 @@ import { WagmiProvider } from "wagmi";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { config } from "./rainbowkit.config.ts";
 
+(window as any).Buffer = Buffer;
+
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
