@@ -29,30 +29,12 @@ Before you begin, ensure you have the following installed:
    npm install
    ```
 
-3. Set up your environment variables:
-   ```bash
-   cp .env.sample .env
-   ```
-   Edit `.env` and add your Okto API credentials:
-
-    ```title=".env"
-    # The Okto environment "sandbox" or "production"
-    VITE_OKTO_ENVIRONMENT= "sandbox"
-
-    # Get the below values from Okto Developer Dashboard. Learn how here- https://docsv2.okto.tech/docs/developer-admin-dashboard
-    VITE_OKTO_CLIENT_PRIVATE_KEY= "YOUR_CLIENT_PRIVATE_KEY"
-    VITE_OKTO_CLIENT_SWA= "YOUR_CLIENT_SWA"
-
-    # Only needed if google authentication is used
-    VITE_GOOGLE_CLIENT_ID= "YOUR_GOOGLE_CLIENT_ID"
-    ```
-
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:5173](http://localhost:5173) with your browser to see your application.
+4. Open [http://localhost:5173](http://localhost:5173) with your browser to see your application.
 
 ## Deployment
 
