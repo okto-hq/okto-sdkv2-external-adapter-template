@@ -1,57 +1,15 @@
-/** @format */
-
-import { LogOut, User } from "lucide-react";
-import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
+import { User } from "lucide-react";
 import { useAccount, useConnect, useDisconnect, useChainId } from "wagmi";
-
-interface NavbarProps {
-  user: Record<string, any> | null;
-  setUser: (decoded: Record<string, any>) => void;
-  isSignedIn: boolean;
-  onSignIn: () => void;
-  onSignOut: () => void;
-  onDashboard: () => void;
-  onBack: () => void;
-}
 
 const chainNameMap: Record<number, string> = {
   84532: "Base Sepolia",
-  11155111: "Sepolia",
 };
 
-export function Navbar({
-  onSignIn,
-  onSignOut,
-  onDashboard,
-  onBack,
-  user,
-  setUser,
-}: NavbarProps) {
+export function Navbar() {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const chainId = useChainId();
-
-  useEffect(() => {
-    const idToken = localStorage.getItem("googleIdToken");
-    if (idToken) {
-      const decoded = jwtDecode<Record<string, any>>(idToken);
-      setUser(decoded);
-      onSignIn();
-    }
-  }, [onSignIn, setUser]);
-
-  const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
-    const idToken = credentialResponse.credential || "";
-    if (idToken) {
-      localStorage.setItem("googleIdToken", idToken);
-      const decoded = jwtDecode<Record<string, any>>(idToken);
-      setUser(decoded);
-      onSignIn();
-    }
-  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -59,7 +17,6 @@ export function Navbar({
         <div className="flex justify-between items-center h-16">
           <h1
             className="text-xl font-bold text-amber-600 cursor-pointer"
-            onClick={onBack}
           >
             Buy Me a Coffee
           </h1>

@@ -1,11 +1,7 @@
-/** @format */
-
 import { useEffect, useState } from "react";
 import { Coffee, X, Loader2, CheckCircle, Copy } from "lucide-react";
 import { Navbar } from "./components/Navbar";
-import { Dashboard } from "./components/Dashboard";
 import "./App.css";
-import { googleLogout } from "@react-oauth/google";
 import {
   useAccount,
   useSendTransaction,
@@ -16,17 +12,18 @@ import { parseEther } from "viem";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isConnected } = useAccount();
   const [toAddress, setToAddress] = useState(
     "0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"
   );
   const [amount, setAmount] = useState(0.0005);
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [isCopied, setIsCopied] = useState(false);
+
+  //check if the user is connected to the wallet
+  const { isConnected } = useAccount();
+
+  //functions to send the transaction to the address with the amount specified
   const {
     data: hash,
     isPending,
@@ -34,21 +31,17 @@ function App() {
     error,
   } = useSendTransaction();
 
+  //wait for the transaction to be confirmed once the hash is received
   const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
 
-  useEffect(() => {
-    if (isConnected) {
-      handleSignIn();
-    } else {
-      handleSignOut();
-    }
-  }, [isConnected]);
-
+  //predefined amounts for the tips
   const predefinedAmounts = [1, 3, 5, 10];
   const predefinedAmountsInEther = [0.0005, 0.001, 0.002, 0.005];
 
+  //handle the support button click
+  //this function will send the transaction to the address with the amount specified
   const handleSupport = async () => {
     setIsLoading(true);
     try {
@@ -66,24 +59,14 @@ function App() {
   useEffect(() => {
     if (isConfirmed) {
       setIsSuccess(true);
+
+      // Close modal and reset values after showing success message
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSuccess(false);
       }, 5000);
     }
   }, [isConfirmed]);
-
-  const handleSignIn = () => {
-    setIsSignedIn(true);
-  };
-
-  const handleSignOut = () => {
-    googleLogout();
-    localStorage.removeItem("googleIdToken");
-    setIsSignedIn(false);
-    setIsModalOpen(false);
-    setShowDashboard(false);
-  };
 
   const handleCopyAddress = () => {
     navigator.clipboard.writeText("0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6");
@@ -93,19 +76,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
-      <Navbar
-        isSignedIn={isSignedIn}
-        onSignIn={handleSignIn}
-        onSignOut={handleSignOut}
-        onDashboard={() => setShowDashboard(true)}
-        onBack={() => setShowDashboard(false)}
-        user={user}
-        setUser={setUser}
-      />
-
-      {showDashboard ? (
-        <Dashboard onBack={() => setShowDashboard(false)} user={user} />
-      ) : (
+      <Navbar/>
         <div className="flex items-center justify-center p-4 pt-40">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center">
@@ -136,7 +107,7 @@ function App() {
                 </div>
               </div>
 
-              {isSignedIn && (
+              {isConnected && (
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="w-full bg-amber-600 text-white rounded-lg px-6 py-3 font-medium hover:bg-amber-700 transition-colors duration-200"
@@ -173,6 +144,7 @@ function App() {
                         Choose Amount
                       </h2>
 
+                      {/* buttons for the predefined amounts */}
                       <div className="grid grid-cols-2 gap-3 mb-6">
                         {predefinedAmounts.map((preset, index) => (
                           <button
@@ -191,6 +163,7 @@ function App() {
                         ))}
                       </div>
 
+                      {/* input for the custom amount */}
                       <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Custom Amount
@@ -236,7 +209,6 @@ function App() {
             )}
           </div>
         </div>
-      )}
     </div>
   );
 }
