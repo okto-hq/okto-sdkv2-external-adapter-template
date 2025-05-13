@@ -1,5 +1,3 @@
-/** @format */
-
 import { User } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -10,11 +8,7 @@ import {
   useSwitchChain,
 } from "wagmi";
 
-interface NavbarProps {
-  onBack: () => void;
-}
-
-export function Navbar({ onBack }: NavbarProps) {
+export function Navbar() {
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
@@ -43,7 +37,6 @@ export function Navbar({ onBack }: NavbarProps) {
         <div className="flex justify-between items-center h-16">
           <h1
             className="text-xl font-bold text-amber-600 cursor-pointer"
-            onClick={onBack}
           >
             Buy Me a Coffee
           </h1>

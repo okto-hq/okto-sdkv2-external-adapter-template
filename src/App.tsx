@@ -1,9 +1,6 @@
-/** @format */
-
 import { useEffect, useState } from "react";
 import { Coffee, X, Loader2, CheckCircle, Copy } from "lucide-react";
 import { Navbar } from "./components/Navbar";
-import { Dashboard } from "./components/Dashboard";
 import "./App.css";
 import {
   useAccount,
@@ -17,32 +14,38 @@ import { useSwitchChain } from "wagmi";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const chainId = useChainId();
-  const { isConnected } = useAccount();
   const [toAddress, setToAddress] = useState(
     "0x8aaf1F5A168EE78D1b96df345eCaf0098607B8F6"
   );
   const [amount, setAmount] = useState(0.0005);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const chainId = useChainId();
+  const { chains, switchChain } = useSwitchChain();
+
+  //check if the user is connected to the wallet
+  const { isConnected } = useAccount();
+
+  //functions to send the transaction to the address with the amount specified
   const {
     data: hash,
     isPending,
     sendTransaction,
     error,
   } = useSendTransaction();
-  const { chains, switchChain } = useSwitchChain();
 
+  //wait for the transaction to be confirmed once the hash is received
   const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash,
   });
 
+  //predefined amounts for the tips
   const predefinedAmounts = [1, 3, 5, 10];
   const predefinedAmountsInEther = [0.0005, 0.001, 0.002, 0.005];
 
+  //handle the support button click
+  //this function will send the transaction to the address with the amount specified
   const handleSupport = async () => {
     if (chainId !== 84532) {
       try {
@@ -70,6 +73,8 @@ function App() {
   useEffect(() => {
     if (isConfirmed) {
       setIsSuccess(true);
+
+      // Close modal and reset values after showing success message
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSuccess(false);
@@ -85,11 +90,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100">
-      <Navbar onBack={() => setShowDashboard(false)} />
-
-      {showDashboard ? (
-        <Dashboard onBack={() => setShowDashboard(false)} user={user} />
-      ) : (
+      <Navbar/>
         <div className="flex items-center justify-center p-4 pt-40">
           <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center">
@@ -157,6 +158,7 @@ function App() {
                         Choose Amount
                       </h2>
 
+                      {/* buttons for the predefined amounts */}
                       <div className="grid grid-cols-2 gap-3 mb-6">
                         {predefinedAmounts.map((preset, index) => (
                           <button
@@ -175,6 +177,7 @@ function App() {
                         ))}
                       </div>
 
+                      {/* input for the custom amount */}
                       <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Custom Amount
@@ -220,7 +223,6 @@ function App() {
             )}
           </div>
         </div>
-      )}
     </div>
   );
 }
