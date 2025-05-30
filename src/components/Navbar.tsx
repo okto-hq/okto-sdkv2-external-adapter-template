@@ -19,15 +19,17 @@ export function Navbar() {
 
   useEffect(() => {
     const ensureCorrectNetwork = async () => {
-      if (isConnected && chainId !== 84532) {
+      if (isConnected) {
         try {
-          await switchChain({ chainId: 84532 });
+          console.log("switching chains");
+          switchChain({ chainId: chains[0].id });
         } catch (e) {
           console.warn("Network switch failed:", e);
         }
       }
     };
 
+    console.log("chains", chains);
     ensureCorrectNetwork();
   }, [isConnected, chainId, switchChain]);
 
@@ -35,9 +37,7 @@ export function Navbar() {
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <h1
-            className="text-xl font-bold text-amber-600 cursor-pointer"
-          >
+          <h1 className="text-xl font-bold text-amber-600 cursor-pointer">
             Buy Me a Coffee
           </h1>
           <div className="flex items-center gap-4">

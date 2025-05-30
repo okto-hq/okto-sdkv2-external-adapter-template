@@ -50,7 +50,7 @@ function App() {
     if (chainId !== 84532) {
       try {
         console.log("Current chainId:", chainId);
-        await switchChain({ chainId: 84532 }); // Trigger switch
+        switchChain({ chainId: 84532 }); // Trigger switch
       } catch (error) {
         alert("Network switch to Base Sepolia failed or was rejected.");
         return;

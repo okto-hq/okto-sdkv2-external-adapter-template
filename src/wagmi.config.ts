@@ -16,7 +16,7 @@ const OKTO_CLIENT_SWA = import.meta.env.VITE_OKTO_CLIENT_SWA;
 // wagmi config
 export const config =  createConfig({
     chains: [baseSepolia],
-    connectors: [
+    connectors: [ 
       okto({
         environment: 'sandbox',
         clientPrivateKey: OKTO_CLIENT_PRIVATE_KEY,
