@@ -21,7 +21,7 @@ export const config =  createConfig({
         environment: 'sandbox',
         clientPrivateKey: OKTO_CLIENT_PRIVATE_KEY,
         clientSWA: OKTO_CLIENT_SWA,
-        googleClientId: GOOGLE_CLIENT_ID,
+        loginType: 'generic'
       }),
     ],
     storage: createStorage({
