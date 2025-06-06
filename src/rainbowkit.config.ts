@@ -21,8 +21,13 @@ const connectors = connectorsForWallets(
           type: "google",
           params: oktoParams,
         }),
+        getOktoSdkConnector({
+          type: 'generic',
+          params: oktoParams,
+        }),
       ],
     },
+
   ],
   {
     appName: "Buy Me a Coffee",

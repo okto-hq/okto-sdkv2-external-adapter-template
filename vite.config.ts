@@ -6,4 +6,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), nodePolyfills()],
+  server: {
+    port: 3000, // will always start the service on port 3000
+  },
 })
