@@ -2,6 +2,7 @@
 
 This is a React + Vite template pre-configured with [Okto SDK](https://docs.okto.tech/) for building chain abstracted decentralized applications. It provides a solid foundation for creating Web3-enabled applications with best practices and essential tooling.
 
+
 ## Features
 
 - ⚡️ **React + Vite** for lightning-fast development
